@@ -54,8 +54,6 @@
 (defun draw (px0 py0 px1 py1 spritesheet-width spritesheet-height &key (xshift 0) (yshift 0))
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
-  (gl:clear :color-buffer-bit)
-  (gl:color 1 1 1)
   (let* ((tx0 (pixel-x-to-texcoord px0 spritesheet-width))
 	 (tx1 (pixel-x-to-texcoord px1 spritesheet-width))
 	 (ty0 (pixel-y-to-texcoord py0 spritesheet-height))
@@ -71,12 +69,6 @@
       (gl:vertex (+ px0 xshift) (+ py1 yshift)  0)))
   (gl:flush))
 
-;;note make function to store pixel data
-;;into an array or list in order to do
-;;animations
-
-;;append pixel-coord-list to frame-list
-;;use make-list to make a frame list the
 (defun make-frame-list (frame-list pixel-coord-list)
   (setf frame-list (mapcar #'append frame-list (list pixel-coord-list))))
 
