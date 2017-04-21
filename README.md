@@ -3,3 +3,4 @@
 
 
 My experimental sprite renderer
+Sprite characters are from opengameart.org
