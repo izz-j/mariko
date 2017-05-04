@@ -70,10 +70,10 @@
   (gl:flush))
 
 (defun make-frame-list (frame-list pixel-coord-list)
-  (setf frame-list (mapcar #'append frame-list (list pixel-coord-list))))
+  (setf frame-list (mapcar #'append frame-list pixel-coord-list)))
 
 (defun pixel-coord-list (path num-of-columns num-of-rows
-			 sprite-row sprite-column)
+			  sprite-row sprite-column)
   (let* ((imw (get-image-width path))
 	 (imh (get-image-height path))
 	 (tw (tile-width imw num-of-columns))
