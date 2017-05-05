@@ -14,12 +14,6 @@
 (defparameter xshift 0)
 (defparameter yshift 0)
 
-(defstruct human
-  walk-right
-  count-max
-  counter
-  position)
-
 (defun play-anim (path frame-list)
   (let ((current-pixel-list (make-list 1)))
     (terpri)
