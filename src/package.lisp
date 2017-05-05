@@ -13,6 +13,7 @@
 	   #:pixel-x-to-texcoord
 	   #:pixel-y-to-texcoord
 	   #:draw
-	   #:make-frame-list
-	   #:pixel-coord-list))
+	   #:append-frame-list
+	   #:pixel-coord-list
+	   #:make-frame-list))
 
