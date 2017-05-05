@@ -87,18 +87,17 @@
 (defun column-list (frames sprite-column-start sprite-column-end)
   (if (<= sprite-column-end 0)
       (loop repeat frames
-	 collect 0)
+	 collect sprite-column-start)
       (loop for columns from sprite-column-start to sprite-column-end
 	 collect columns)))
 
 (defun row-list (frames sprite-row-start sprite-row-end)
   (if (<= sprite-row-end 0)
       (loop repeat frames
-	 collect 0)
+	 collect sprite-row-start)
       (loop for rows from sprite-row-start to sprite-row-end
-	   collect rows)))
-     
-	    
+	 collect rows)))
+
 (defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
   (loop for columns in (column-list frames sprite-column-start sprite-column-end)
        for rows in (row-list frames sprite-row-start sprite-row-end)
