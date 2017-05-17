@@ -5,7 +5,7 @@ From "variouswalkcycle.png"
 closed source project character "The Sorceress" by artofsully
 ![](https://github.com/izz-j/mariko/raw/master/sample_sorceress.gif)
 
-From "variouswalkcycle.png
+From "variouswalkcycle.png"
 ![](https://github.com/izz-j/mariko/raw/master/sample-anim.gif)
 
 My experimental sprite renderer.
