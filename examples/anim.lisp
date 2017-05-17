@@ -13,7 +13,9 @@
 (defparameter current-frame 0)
 (defparameter xshift 0)
 (defparameter yshift 0)
-
+;;not the best way to draw the frames
+;;but since we only need 3 for this example
+;;this is fine
 (defun play-anim (path frame-list)
   (let ((current-pixel-list (make-list 1)))
     (terpri)
@@ -51,7 +53,8 @@
 	(mariko:set-viewport 800 400)
 	(gl:clear-color 1 1 1 1)
 	(gl:clear :color-buffer)
-	(loop until (glfw:window-should-close-p)
-	   do (play-anim path (mariko:make-frame-list path 3 12 8 3 5 1 0))
-	   do (glfw:poll-events)
-	   do (glfw:swap-buffers))))))
+	(let ((walk (mariko:make-frame-list path 3 12 8 3 5 1 0)))
+	  (loop until (glfw:window-should-close-p)
+	     do (play-anim path walk)
+	     do (glfw:poll-events)
+	     do (glfw:swap-buffers))))))
