@@ -1,6 +1,6 @@
 ![](https://github.com/izz-j/mariko/raw/master/sprites-preview.png)
 
-[Sorceress by artofsully](https://github.com/izz-j/mariko/raw/master/sprites/sample_sorceress.gif)
+[Sorceress by artofsully](https://github.com/izz-j/mariko/raw/master/sample_sorceress.gif)
 
 ![](https://github.com/izz-j/mariko/raw/master/sample-anim.gif)
 
