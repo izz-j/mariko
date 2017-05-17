@@ -1,6 +1,7 @@
 ![](https://github.com/izz-j/mariko/raw/master/sprites-preview.png)
 
-[Sorceress by artofsully](https://github.com/izz-j/mariko/raw/master/sample_sorceress.gif)
+closed source project character "The Sorceress" by artofsully
+![](https://github.com/izz-j/mariko/raw/master/sample_sorceress.gif)
 
 ![](https://github.com/izz-j/mariko/raw/master/sample-anim.gif)
 
