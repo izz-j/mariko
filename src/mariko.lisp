@@ -113,7 +113,7 @@
 	 collect rows)))
 
 (defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
-  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. Sprite row end is zero unless you want to collect the sprite frames vertically.")
+  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. Sprite row end is zero unless you want to collect the sprite frames vertically."
   (loop for columns in (column-list frames sprite-column-start sprite-column-end)
        for rows in (row-list frames sprite-row-start sprite-row-end)
        collect (pixel-coord-list path number-of-columns number-of-rows columns rows)))
