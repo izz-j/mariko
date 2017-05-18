@@ -13,6 +13,7 @@
   (gl:load-identity))
 
 (defun load-texture (path)
+  "load 2d texture"
   (let* ((image (sdl2-image:load-image path))
 	 (surface-data (sdl2:surface-pixels image))
 	 (width (sdl2:surface-width image))
@@ -52,6 +53,7 @@
   (/ y spritesheet-height))
 
 (defun draw (px0 py0 px1 py1 spritesheet-width spritesheet-height &key (xshift 0) (yshift 0))
+  "gets pixel coordinates converts them into tex coordinates and draws them. It is recommended to leave some space between objects on a spritesheet for this function to accurately draw the specified object" 
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (let* ((tx0 (pixel-x-to-texcoord px0 spritesheet-width))
@@ -70,6 +72,7 @@
   (gl:flush))
 
 (defun append-frame-list (frame-list pixel-coord-list)
+  "append a single sprite coordinate to a list of sprite coordinates"
   (setf frame-list (mapcar #'append frame-list pixel-coord-list)))
 
 (defun pixel-coord-list (path num-of-columns num-of-rows
@@ -94,6 +97,7 @@
 			   :xshift xshift :yshift yshift)))
 
 (defun column-list (frames sprite-column-start sprite-column-end)
+  "collect the sprite column coordinates on a spritesheet"
   (if (<= sprite-column-end 0)
       (loop repeat frames
 	 collect sprite-column-start)
@@ -101,6 +105,7 @@
 	 collect columns)))
 
 (defun row-list (frames sprite-row-start sprite-row-end)
+  "collect the sprite row coordinates on a spritesheet"
   (if (<= sprite-row-end 0)
       (loop repeat frames
 	 collect sprite-row-start)
@@ -108,6 +113,7 @@
 	 collect rows)))
 
 (defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
+  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. Sprite row end is zero unless you want to collect the sprite frames vertically.")
   (loop for columns in (column-list frames sprite-column-start sprite-column-end)
        for rows in (row-list frames sprite-row-start sprite-row-end)
        collect (pixel-coord-list path number-of-columns number-of-rows columns rows)))
