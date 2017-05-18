@@ -15,5 +15,8 @@
 	   #:draw
 	   #:append-frame-list
 	   #:pixel-coord-list
-	   #:make-frame-list))
+	   #:make-frame-list
+	   #:display-sprite
+	   #:map-tile-right-horizontal
+	   #:map-tile-down-vertical))
 
