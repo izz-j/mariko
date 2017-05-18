@@ -13,6 +13,7 @@
   (gl:load-identity))
 
 (defun load-texture (path)
+  "load 2d texture"
   (let* ((image (sdl2-image:load-image path))
 	 (surface-data (sdl2:surface-pixels image))
 	 (width (sdl2:surface-width image))
@@ -52,6 +53,7 @@
   (/ y spritesheet-height))
 
 (defun draw (px0 py0 px1 py1 spritesheet-width spritesheet-height &key (xshift 0) (yshift 0))
+  "gets pixel coordinates converts them into tex coordinates and draws them. It is recommended to leave some space between objects on a spritesheet for this function to accurately draw the specified object" 
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (let* ((tx0 (pixel-x-to-texcoord px0 spritesheet-width))
@@ -70,6 +72,7 @@
   (gl:flush))
 
 (defun append-frame-list (frame-list pixel-coord-list)
+  "append a single sprite coordinate to a list of sprite coordinates"
   (setf frame-list (mapcar #'append frame-list pixel-coord-list)))
 
 (defun pixel-coord-list (path num-of-columns num-of-rows
@@ -84,7 +87,17 @@
 	 (py1 (+ py0 th)))
     (list px0 py0 px1 py1)))
 
+(defun display-sprite (path num-of-columns num-of-rows sprite-row sprite-column &key (xshift 0) (yshift 0))
+  "Use if you want to use just one sprite out of a sprite sheet"
+  (let ((pixel-list (mariko:pixel-coord-list path num-of-columns num-of-rows
+					     sprite-row sprite-column)))
+    (mariko:draw (car pixel-list) (cadr pixel-list) (caddr pixel-list) (cadddr pixel-list)
+			   (mariko:get-image-width path)
+			   (mariko:get-image-height path)
+			   :xshift xshift :yshift yshift)))
+
 (defun column-list (frames sprite-column-start sprite-column-end)
+  "collect the sprite column coordinates on a spritesheet"
   (if (<= sprite-column-end 0)
       (loop repeat frames
 	 collect sprite-column-start)
@@ -92,6 +105,7 @@
 	 collect columns)))
 
 (defun row-list (frames sprite-row-start sprite-row-end)
+  "collect the sprite row coordinates on a spritesheet"
   (if (<= sprite-row-end 0)
       (loop repeat frames
 	 collect sprite-row-start)
@@ -99,6 +113,21 @@
 	 collect rows)))
 
 (defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
+  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. Sprite row end is zero unless you want to collect the sprite frames vertically.")
   (loop for columns in (column-list frames sprite-column-start sprite-column-end)
        for rows in (row-list frames sprite-row-start sprite-row-end)
        collect (pixel-coord-list path number-of-columns number-of-rows columns rows)))
+
+(defun map-tile-right-horizontal (path number-of-tiles distance-apart &key (num-of-columns 1) (num-of-rows 1) (sprite-row 0) (sprite-column 0) (xshift 0) (yshift 0))
+  "Draw horizontal tiles to the right. if num-of-columns or rows not specified it will assume only 1 tile is on the sprite sheet"
+  (loop repeat number-of-tiles
+     do (setf xshift (+ xshift distance-apart))
+     do (display-sprite path num-of-columns
+			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))
+
+(defun map-tile-down-vertical (path number-of-tiles distance-apart &key (num-of-columns 1) (num-of-rows 1) (sprite-row 0) (sprite-column 0) (xshift 0) (yshift 0))
+    "Draw horizontal tiles to the right. if num-of-columns or rows not specified it will assume only 1 tile is on the sprite sheet"
+  (loop repeat number-of-tiles
+     do (setf yshift (+ yshift distance-apart))
+     do (display-sprite path num-of-columns
+			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))
