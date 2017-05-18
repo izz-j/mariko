@@ -13,6 +13,10 @@
 	   #:pixel-x-to-texcoord
 	   #:pixel-y-to-texcoord
 	   #:draw
+	   #:append-frame-list
+	   #:pixel-coord-list
 	   #:make-frame-list
-	   #:pixel-coord-list))
+	   #:display-sprite
+	   #:map-tile-right-horizontal
+	   #:map-tile-down-vertical))
 

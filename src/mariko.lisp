@@ -69,7 +69,7 @@
       (gl:vertex (+ px0 xshift) (+ py1 yshift)  0)))
   (gl:flush))
 
-(defun make-frame-list (frame-list pixel-coord-list)
+(defun append-frame-list (frame-list pixel-coord-list)
   (setf frame-list (mapcar #'append frame-list pixel-coord-list)))
 
 (defun pixel-coord-list (path num-of-columns num-of-rows
@@ -83,3 +83,45 @@
 	 (px1 (+ px0 tw))
 	 (py1 (+ py0 th)))
     (list px0 py0 px1 py1)))
+
+(defun display-sprite (path num-of-columns num-of-rows sprite-row sprite-column &key (xshift 0) (yshift 0))
+  "Use if you want to use just one sprite out of a sprite sheet"
+  (let ((pixel-list (mariko:pixel-coord-list path num-of-columns num-of-rows
+					     sprite-row sprite-column)))
+    (mariko:draw (car pixel-list) (cadr pixel-list) (caddr pixel-list) (cadddr pixel-list)
+			   (mariko:get-image-width path)
+			   (mariko:get-image-height path)
+			   :xshift xshift :yshift yshift)))
+
+(defun column-list (frames sprite-column-start sprite-column-end)
+  (if (<= sprite-column-end 0)
+      (loop repeat frames
+	 collect sprite-column-start)
+      (loop for columns from sprite-column-start to sprite-column-end
+	 collect columns)))
+
+(defun row-list (frames sprite-row-start sprite-row-end)
+  (if (<= sprite-row-end 0)
+      (loop repeat frames
+	 collect sprite-row-start)
+      (loop for rows from sprite-row-start to sprite-row-end
+	 collect rows)))
+
+(defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
+  (loop for columns in (column-list frames sprite-column-start sprite-column-end)
+       for rows in (row-list frames sprite-row-start sprite-row-end)
+       collect (pixel-coord-list path number-of-columns number-of-rows columns rows)))
+
+(defun map-tile-right-horizontal (path number-of-tiles distance-apart &key (num-of-columns 1) (num-of-rows 1) (sprite-row 0) (sprite-column 0) (xshift 0) (yshift 0))
+  "Draw horizontal tiles to the right. if num-of-columns or rows not specified it will assume only 1 tile is on the sprite sheet"
+  (loop repeat number-of-tiles
+     do (setf xshift (+ xshift distance-apart))
+     do (display-sprite path num-of-columns
+			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))
+
+(defun map-tile-down-vertical (path number-of-tiles distance-apart &key (num-of-columns 1) (num-of-rows 1) (sprite-row 0) (sprite-column 0) (xshift 0) (yshift 0))
+    "Draw horizontal tiles to the right. if num-of-columns or rows not specified it will assume only 1 tile is on the sprite sheet"
+  (loop repeat number-of-tiles
+     do (setf yshift (+ yshift distance-apart))
+     do (display-sprite path num-of-columns
+			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))

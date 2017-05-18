@@ -7,25 +7,11 @@
   (declare (ignore window))
   (mariko:set-viewport w h))
 
-(defun display-sprite (path num-of-columns num-of-rows sprite-row sprite-column &key (xshift 0) (yshift 0))
-  (let ((pixel-list (mariko:pixel-coord-list path num-of-columns num-of-rows
-					     sprite-row sprite-column)))
-    (mariko:draw (car pixel-list) (cadr pixel-list) (caddr pixel-list) (cadddr pixel-list)
-			   (mariko:get-image-width path)
-			   (mariko:get-image-height path)
-			   :xshift xshift :yshift yshift)))
-
-(defun map-tile-right-horizontal (path number-of-tiles num-of-columns num-of-rows sprite-row sprite-column xshift yshift distance-apart)
-  (loop repeat number-of-tiles
-     do (setf xshift (+ xshift distance-apart))
-     do (princ xshift)
-       (terpri)
-     do (display-sprite path num-of-columns
-			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))
-  
 (defun show-map (path)
   (gl:clear :color-buffer-bit)
-  (map-tile-right-horizontal path 2 1 1 0 0 50 100 65))
+  (mariko:map-tile-right-horizontal path 3 65)
+  (mariko:map-tile-right-horizontal path 4  65 :xshift 35 :yshift 50)
+  (mariko:map-tile-down-vertical path 2 50 :xshift 135 :yshift 50))
 
 (defun main ()
   (sdl2-image:init '(:png))
@@ -39,8 +25,5 @@
 	(gl:clear :color-buffer)
 	(loop until (glfw:window-should-close-p)
 	   do (show-map path)
-	   ;;do (display-sprite path 1 1 0 0)
-	   ;;do (display-sprite path 1 1 0 0 :xshift 65)
-	   ;;do (display-sprite path 1 1 0 0 :xshift 30 :yshift 15)
 	   do (glfw:poll-events)
 	   do (glfw:swap-buffers))))))
