@@ -7,23 +7,74 @@
   (declare (ignore window))
   (mariko:set-viewport w h))
 
-(defun show-map (path)
-  (gl:clear :color-buffer-bit)
-  (mariko:map-tile-right-horizontal path 3 65)
-  (mariko:map-tile-right-horizontal path 4  65 :xshift 35 :yshift 50)
-  (mariko:map-tile-down-vertical path 2 50 :xshift 135 :yshift 50))
+(defun make-sprite-list-from-singles (path-list)
+  "Make a list of sprite pixel-coords from a single sprite-sheet. Order matters
+if doing tile-map with draw-tile-map"
+  (loop for i in path-list
+     collect (mariko:pixel-coord-list i 1 1 0 0)))
 
+(defun read-file-to-list (data-file)
+  "Read data file char by char unitl eof"
+  (with-open-file (map data-file)
+    (loop for char = (read-char map nil 'eof)
+       until (eq char 'eof)
+	 collect char)))
+
+(defun tile-selector (char path sprite-coord tile-pixel-coord-list path-list texture xshift yshift)
+  "Select tile in list. In this ex 0 is grass and 1 is dirt"
+  (if (eq char #\0)
+      (progn
+	(setf texture (car path-list))
+	(setf path (car path-list))
+	(setf sprite-coord (car tile-pixel-coord-list))
+	(mariko:load-texture texture)))
+  (if (eq char #\1)
+      (progn
+	(setf texture (cadr path-list))
+	(setf path (cadr path-list))
+	(setf sprite-coord (cadr tile-pixel-coord-list))
+	(mariko:load-texture texture)))
+  (unless (eq path nil)
+      (mariko:draw (car sprite-coord) (cadr sprite-coord) (caddr sprite-coord)
+		   (cadddr sprite-coord) (mariko:get-image-width path) (mariko:get-image-height path) :xshift xshift :yshift yshift)))
+
+
+(defun draw-tiles (path-list data-file tile-pixel-coord-list x-distance-apart y-distance-apart &key (offset 0) (xshift 0) (yshift 0))
+  "read map data file and draw tiles accordingly. offset shifts the each tile in the x direction use this if tiles are not hex."
+  (let ((map-list (read-file-to-list data-file)))
+    (loop for char in map-list
+       with path 
+       with sprite-coord
+       with texture = 0
+       with count = 0
+       if (eq char #\NewLine)
+       do (setf count (+ count 1))
+       and
+       do (setf yshift (+ yshift y-distance-apart))
+       and
+       do (setf xshift (* count offset))
+	 else do (setf xshift (+ xshift x-distance-apart))
+       do (tile-selector char path sprite-coord tile-pixel-coord-list path-list texture
+			 xshift yshift))))	
+	 
+
+(defun map-tiles (path-list coord-list)
+  (gl:clear :color-buffer-bit)
+  (draw-tiles path-list "sample-map.txt" coord-list 65 50 :offset 30)) 
+			     
 (defun main ()
   (sdl2-image:init '(:png))
   (glfw:with-init-window (:title "Test Window" :width 800 :height 400)
-    (let ((path "tileGrass.png")) 
-      (mariko:load-texture path)
+    (let* ((grass "tileGrass.png")
+	   (dirt "tileDirt_full.png")
+	   (path-list (list grass dirt))
+	   (tile-pixel-coord-list (make-sprite-list-from-singles path-list)))
 	(glfw:set-window-size-callback 'update-viewport)
 	(glfw:set-key-callback 'quit-on-escape)
 	(mariko:set-viewport 800 400)
 	(gl:clear-color 1 1 1 1)
 	(gl:clear :color-buffer)
 	(loop until (glfw:window-should-close-p)
-	   do (show-map path)
+	   do (map-tiles path-list tile-pixel-coord-list)
 	   do (glfw:poll-events)
-	   do (glfw:swap-buffers))))))
+	   do (glfw:swap-buffers)))))
