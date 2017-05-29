@@ -18,5 +18,7 @@
 	   #:make-frame-list
 	   #:display-sprite
 	   #:map-tile-right-horizontal
-	   #:map-tile-down-vertical))
+	   #:map-tile-down-vertical
+	   #:make-sprite-list-from-singles
+	   #:draw-tiles))
 
