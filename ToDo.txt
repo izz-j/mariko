@@ -1,0 +1,3 @@
+[] assign tile coordinates for each tile drawn for hex and square tiles
+[] output a specific tile's coordinates on mouse click
+[] example of being able to view the tiles cut off from window size
