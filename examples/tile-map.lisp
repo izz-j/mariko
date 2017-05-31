@@ -15,9 +15,10 @@
   (setf (gethash #\0 texture-table) (mariko:load-texture (car path-list)))
   (setf (gethash #\1 texture-table) (mariko:load-texture (cadr path-list))))
 
-(defun map-tiles (path-table tile-pixel-coord-table texture-table)
-  (gl:clear :color-buffer-bit)
-  (mariko:draw-tiles texture-table "sample-map.txt" path-table tile-pixel-coord-table 65 50 :offset 30))
+(defun map-tiles (data-file path-table tile-pixel-coord-table texture-table)
+  (let ((map-list (mariko:read-file-to-list data-file)))
+    (gl:clear :color-buffer-bit)
+    (mariko:draw-tiles map-list texture-table path-table tile-pixel-coord-table 65 50 :offset 30)))
 			     
 (defun main ()
   (sdl2-image:init '(:png))
@@ -36,6 +37,6 @@
       (gl:clear-color 1 1 1 1)
       (gl:clear :color-buffer)
       (loop until (glfw:window-should-close-p)
-	 do (map-tiles path-table tile-pixel-coord-table texture-table)
+	 do (map-tiles "sample-map.txt" path-table tile-pixel-coord-table texture-table)
 	 do (glfw:poll-events)
 	 do (glfw:swap-buffers)))))
