@@ -20,5 +20,6 @@
 	   #:map-tile-right-horizontal
 	   #:map-tile-down-vertical
 	   #:make-sprite-list-from-singles
+	   #:read-file-to-list
 	   #:draw-tiles))
 

@@ -53,8 +53,7 @@
   (/ y spritesheet-height))
 
 (defun draw (px0 py0 px1 py1 spritesheet-width spritesheet-height &key (xshift 0) (yshift 0))
-  "gets pixel coordinates converts them into tex coordinates and draws them. It is recommended to leave some space 
-between objects on a spritesheet for this function to accurately draw the specified object" 
+  "gets pixel coordinates converts them into tex coordinates and draws them. It is recommended to leave some space between objects on a spritesheet for this function to accurately draw the specified object" 
   (gl:enable :blend)
   (gl:blend-func :src-alpha :one-minus-src-alpha)
   (let* ((tx0 (pixel-x-to-texcoord px0 spritesheet-width))
@@ -89,8 +88,7 @@ between objects on a spritesheet for this function to accurately draw the specif
     (list px0 py0 px1 py1)))
 
 (defun display-sprite (path num-of-columns num-of-rows sprite-row sprite-column &key (xshift 0) (yshift 0))
-  "Use if you want to use just one sprite out of a sprite sheet. num-of-columns and num-of-rows is the total number columns and rows
-the sprite sheet. sprite-row and sprite-column is the specific row and column you want to display"
+  "Use if you want to use just one sprite out of a sprite sheet"
   (let ((pixel-list (mariko:pixel-coord-list path num-of-columns num-of-rows
 					     sprite-row sprite-column)))
     (mariko:draw (car pixel-list) (cadr pixel-list) (caddr pixel-list) (cadddr pixel-list)
@@ -115,8 +113,7 @@ the sprite sheet. sprite-row and sprite-column is the specific row and column yo
 	 collect rows)))
 
 (defun make-frame-list (path frames number-of-columns number-of-rows sprite-column-start sprite-column-end sprite-row-start sprite-row-end)
-  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. 
-Sprite row end is zero unless you want to collect the sprite frames vertically."
+  "Makes a list of coordinates from the collected row and sprite coordinates. Use for animating a sprite is reccommended. Sprite row end is zero unless you want to collect the sprite frames vertically."
   (loop for columns in (column-list frames sprite-column-start sprite-column-end)
        for rows in (row-list frames sprite-row-start sprite-row-end)
        collect (pixel-coord-list path number-of-columns number-of-rows columns rows)))
@@ -136,8 +133,8 @@ Sprite row end is zero unless you want to collect the sprite frames vertically."
 			num-of-rows sprite-row sprite-column :xshift xshift :yshift yshift)))
 
 (defun make-sprite-list-from-singles (path-list)
-  "Make a list of sprite pixel-coords from multiple sprite-sheets with a singe sprite on them. Order matters
-if doing tile-map with draw-tile"
+  "Make a list of sprite pixel-coords from a single sprite-sheet. Order matters
+if doing tile-map with draw-tile-map"
   (loop for i in path-list
      collect (pixel-coord-list i 1 1 0 0)))
 
@@ -152,18 +149,16 @@ if doing tile-map with draw-tile"
 		      texture-table xshift yshift)
   "Select tile in according to matching char key in hash tables. The chars read
 from file must have an existing hash key. If not then there will be undesired behavior."
-  (unless (or (eq char #\NewLine) (eq char #\Space))
+  (unless (or (eq char #\NewLine) (eq char #\Space) (eq char #\Tab))
       (progn
 	(setf path (gethash char path-table))
-	(setf sprite-coord (gethash char tile-pixel-coord-table))))
-  (unless (eq path nil)
-    (gl:bind-texture :texture-2d (gethash char texture-table))
-	  (draw (car sprite-coord) (cadr sprite-coord) (caddr sprite-coord)
-		       (cadddr sprite-coord) (mariko:get-image-width path) (mariko:get-image-height path) :xshift xshift :yshift yshift)))
+	(setf sprite-coord (gethash char tile-pixel-coord-table))
+	(gl:bind-texture :texture-2d (gethash char texture-table))
+	(draw (car sprite-coord) (cadr sprite-coord) (caddr sprite-coord)
+		       (cadddr sprite-coord) (mariko:get-image-width path) (mariko:get-image-height path) :xshift xshift :yshift yshift))))
 
-(defun draw-tiles (texture-table data-file path-table tile-pixel-coord-table x-distance-apart y-distance-apart &key (offset 0) (xshift 0) (yshift 0))
-  "read map data file and draw tiles accordingly. offset shifts the each tile in the x direction. Use offset if tiles are not squares."
-  (let ((map-list (read-file-to-list data-file)))
+(defun draw-tiles (map-list texture-table path-table tile-pixel-coord-table x-distance-apart y-distance-apart &key (offset 0) (xshift 0) (yshift 0))
+  "read map data file and draw tiles accordingly. offset shifts the each tile in the x direction use this if tiles are not hex."
     (loop for char in map-list
        with path 
        with sprite-coord
@@ -176,4 +171,4 @@ from file must have an existing hash key. If not then there will be undesired be
        do (setf xshift (* count offset))
        else do (setf xshift (+ xshift x-distance-apart))
        do (tile-selector char path sprite-coord tile-pixel-coord-table path-table
-			 texture-table xshift yshift))))
+			 texture-table xshift yshift)))
