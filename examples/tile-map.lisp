@@ -14,16 +14,26 @@
   (setf (gethash #\1 tile-pixel-coord-table) (cadr tile-pixel-coord-list))
   (setf (gethash #\0 texture-table) (mariko:load-texture (car path-list)))
   (setf (gethash #\1 texture-table) (mariko:load-texture (cadr path-list))))
-
-(defun map-tiles (data-file path-table tile-pixel-coord-table texture-table)
-  (let ((map-list (mariko:read-file-to-list data-file)))
+;;note use gamebox-grid::cell change to one colon when loading it again
+;;Note make a function that highlights the specific tile chosen by gamebox-grid
+;;note tile drawer and grid s can be two separate functions. 
+;;(defun highlight-hex-tile ()
+ ;; ()
+;;(defun make-hex-grid (map-width map-length path)
+ ;; (let ((grid (gamebox-grids:grid 'gamebox-grids:hex-rows :offset :odd :y-axis :down :size (gamebox-math:vec map-width map-length) :cell-size (gamebox-math:vec (mariko:get-image-width path) (mariko:get-image-height path)))))
+   ;; (princ (gamebox-grids:cell-to-point grid (gamebox-grids::cell 1 0)))
+    ;;(terpri)
+    ;;(princ (gamebox-grids:cell-member-p grid (gamebox-grids::cell 5 5)))))
+    
+(defun map-tiles (path-table tile-pixel-coord-table texture-table)
     (gl:clear :color-buffer-bit)
-    (mariko:draw-tiles map-list texture-table path-table tile-pixel-coord-table 65 50 :offset 30)))
+    (mariko:draw-tiles "sample-map.txt" texture-table path-table tile-pixel-coord-table 45 45 :offset 20 :y-even-column-offset t)))
+
 			     
 (defun main ()
   (sdl2-image:init '(:png))
   (glfw:with-init-window (:title "Test Window" :width 800 :height 400)
-    (let* ((grass "tileGrass.png")
+    (let* ((grass "Tile_Grass.png")
 	   (dirt "tileDirt_full.png")
 	   (path-list (list grass dirt))
 	   (path-table (make-hash-table))
@@ -37,6 +47,6 @@
       (gl:clear-color 1 1 1 1)
       (gl:clear :color-buffer)
       (loop until (glfw:window-should-close-p)
-	 do (map-tiles "sample-map.txt" path-table tile-pixel-coord-table texture-table)
+	 do (map-tiles path-table tile-pixel-coord-table texture-table)
 	 do (glfw:poll-events)
 	 do (glfw:swap-buffers)))))
