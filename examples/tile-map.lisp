@@ -9,12 +9,9 @@
 	 
 (defun set-tables (path-table path-list tile-pixel-coord-table tile-pixel-coord-list texture-table)
   (setf (gethash #\0 path-table) (car path-list))
-  (setf (gethash #\1 path-table) (cadr path-list))
   (setf (gethash #\0 tile-pixel-coord-table) (car tile-pixel-coord-list))
-  (setf (gethash #\1 tile-pixel-coord-table) (cadr tile-pixel-coord-list))
-  (setf (gethash #\0 texture-table) (mariko:load-texture (car path-list)))
-  (setf (gethash #\1 texture-table) (mariko:load-texture (cadr path-list))))
-;;note use gamebox-grid::cell change to one colon when loading it again
+  (setf (gethash #\0 texture-table) (mariko:load-texture (car path-list))))
+  ;;note use gamebox-grid::cell change to one colon when loading it again
 ;;Note make a function that highlights the specific tile chosen by gamebox-grid
 ;;note tile drawer and grid s can be two separate functions. 
 ;;(defun highlight-hex-tile ()
@@ -34,8 +31,7 @@
   (sdl2-image:init '(:png))
   (glfw:with-init-window (:title "Test Window" :width 800 :height 400)
     (let* ((grass "Tile_Grass.png")
-	   (dirt "tileDirt_full.png")
-	   (path-list (list grass dirt))
+	   (path-list (list grass))
 	   (path-table (make-hash-table))
 	   (texture-table (make-hash-table))
 	   (tile-pixel-coord-list (mariko:make-sprite-list-from-singles path-list))
