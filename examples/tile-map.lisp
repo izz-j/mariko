@@ -22,9 +22,12 @@
     ;;(terpri)
     ;;(princ (gamebox-grids:cell-member-p grid (gamebox-grids::cell 5 5)))))
     
-(defun map-tiles (path-table tile-pixel-coord-table texture-table)
-    (gl:clear :color-buffer-bit)
-    (mariko:draw-tiles "sample-map.txt" texture-table path-table tile-pixel-coord-table 45 45 :offset 20 :y-even-column-offset t)))
+(defun map-tiles (data-file path-table tile-pixel-coord-table texture-table)
+  (let* ((map-list (mariko:read-file-to-list data-file))
+	 (tile-vector (make-array (length map-list) :fill-pointer 0)))
+  (gl:clear :color-buffer-bit)
+  (mariko:read-tile-list tile-vector map-list texture-table path-table tile-pixel-coord-table 50 40 :offset 20 :y-odd-column-offset t)
+  (mariko:draw-tiles tile-vector)))
 
 			     
 (defun main ()
@@ -43,6 +46,6 @@
       (gl:clear-color 1 1 1 1)
       (gl:clear :color-buffer)
       (loop until (glfw:window-should-close-p)
-	 do (map-tiles path-table tile-pixel-coord-table texture-table)
+	 do (map-tiles "sample-map.txt" path-table tile-pixel-coord-table texture-table)
 	 do (glfw:poll-events)
 	 do (glfw:swap-buffers)))))
