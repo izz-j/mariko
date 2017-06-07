@@ -145,30 +145,87 @@ if doing tile-map with draw-tile-map"
        until (eq char 'eof)
        nconc (list char))))
 
+(defclass tile ()
+  ((x 
+    :initarg :x)
+   (y
+    :initarg :y)
+   (z
+    :initarg :z)
+   (xshift
+    :initarg :xshift)
+   (yshift
+    :initarg :yshift)
+   (char-label
+    :initarg :char-label
+    :initform 0)
+   (texture
+    :initarg :texture)
+   (sprite-coord
+    :initarg :sprite-coord)
+   (path
+    :initarg :path)))
+   
+;;use this function to store all the tile object data into a vector
+;;then draw the tiles according to highest x and y value first
+(defun create-tile-object (x y path sprite-coord texture char tile-vector xshift yshift &key (z 0))
+  (let ((tile-object (make-instance 'tile :x x :y y :z z :xshift xshift :yshift yshift :char-label char :texture texture
+				    :sprite-coord sprite-coord :path path)))
+    (vector-push tile-object tile-vector)))
+
 (defun tile-selector (char path sprite-coord tile-pixel-coord-table path-table
-		      texture-table xshift yshift)
+		      texture-table xshift yshift count offset y-odd-column-offset y-even-column-offset tile-vector texture)
   "Select tile in according to matching char key in hash tables. The chars read
-from file must have an existing hash key. If not then there will be undesired behavior."
+from file must have an existing hash key. If not then there will be undesired behavior. only one offset can be chosen at a time"
   (unless (or (eq char #\NewLine) (eq char #\Space) (eq char #\Tab))
-      (progn
+    (progn
 	(setf path (gethash char path-table))
 	(setf sprite-coord (gethash char tile-pixel-coord-table))
-	(gl:bind-texture :texture-2d (gethash char texture-table))
-	(draw (car sprite-coord) (cadr sprite-coord) (caddr sprite-coord)
-		       (cadddr sprite-coord) (mariko:get-image-width path) (mariko:get-image-height path) :xshift xshift :yshift yshift))))
+	(setf texture (gethash char texture-table))
+	(when (and (oddp count) (eq y-odd-column-offset t))
+	  (setf yshift (+ yshift offset)))
+	(when (and (evenp count) (eq y-even-column-offset t))
+	  (setf yshift (+ yshift offset)))
+	(create-tile-object (+ xshift (car sprite-coord)) (+ yshift (cadr sprite-coord)) path sprite-coord texture char tile-vector xshift yshift))))
 
-(defun draw-tiles (map-list texture-table path-table tile-pixel-coord-table x-distance-apart y-distance-apart &key (offset 0) (xshift 0) (yshift 0))
-  "read map data file and draw tiles accordingly. offset shifts the each tile in the x direction use this if tiles are not hex."
+(defun get-map-width (map-list)
+  (loop for i in map-list
+     count i
+     until (eq i '#\NewLine)))
+
+
+(defun get-map-length (area width)
+    (if (= width 0)
+	(princ "Can't divide by zero")
+	(/ area width)))
+
+;;length and width may be used later for grid
+(defun read-tile-list (tile-vector map-list texture-table path-table tile-pixel-coord-table x-distance-apart y-distance-apart &key (y-odd-column-offset nil) (y-even-column-offset nil) (offset 0) (xshift 0) (yshift 0))
+  "read map data file and draw tiles accordingly. if offset must have a value to to use and even or odd column offset"
+  (let* ((width (get-map-width map-list))
+	 (length (get-map-length (length map-list) width)))
     (loop for char in map-list
        with path 
        with sprite-coord
+       with texture
        with count = 0
-       if (eq char #\NewLine)
+       do (tile-selector char path sprite-coord tile-pixel-coord-table path-table texture-table xshift yshift count offset y-odd-column-offset y-even-column-offset tile-vector texture)
+       do (setf xshift (+ xshift x-distance-apart))
+       unless (eq char #\NewLine)
        do (setf count (+ count 1))
+       if (eq char #\NewLine)
+       do (setf count 0)
        and
        do (setf yshift (+ yshift y-distance-apart))
        and
-       do (setf xshift (* count offset))
-       else do (setf xshift (+ xshift x-distance-apart))
-       do (tile-selector char path sprite-coord tile-pixel-coord-table path-table
-			 texture-table xshift yshift)))
+       do (setf xshift 0))))
+
+(defun draw-tiles (tile-vector)
+  (loop for tile across tile-vector
+     do (setf tile-vector (sort tile-vector #'< :key #'(lambda (tile) (slot-value tile 'y)))))
+  (loop for tile across tile-vector
+     do (bind-and-draw tile)))
+
+(defun bind-and-draw (tile)
+  (gl:bind-texture :texture-2d (slot-value tile 'texture))
+  (draw (car (slot-value tile 'sprite-coord)) (cadr (slot-value tile 'sprite-coord)) (caddr (slot-value tile 'sprite-coord)) (cadddr (slot-value tile 'sprite-coord)) (get-image-width (slot-value tile 'path)) (get-image-height (slot-value tile 'path)) :xshift (slot-value tile 'x) :yshift (slot-value tile 'y)))

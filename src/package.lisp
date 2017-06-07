@@ -21,5 +21,6 @@
 	   #:map-tile-down-vertical
 	   #:make-sprite-list-from-singles
 	   #:read-file-to-list
+	   #:read-tile-list
 	   #:draw-tiles))
 
