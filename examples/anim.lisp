@@ -8,7 +8,7 @@
   (mariko:set-viewport w h))
 
 
-(defparameter count-max 6)
+(defparameter count-max 3)
 (defparameter counter count-max)
 (defparameter current-frame 0)
 (defparameter xshift 0)
@@ -40,7 +40,7 @@
     (setf counter (- counter 1))))
 
 
-(defun main ()
+(defun anim-test ()
   (sdl2-image:init '(:png))
   (glfw:with-init-window (:title "Test Window" :width 800 :height 400)
     (let ((path "walkcyclevarious.png")) 
@@ -54,4 +54,4 @@
 	(loop until (glfw:window-should-close-p)
 	   do (play-anim path (mariko:make-frame-list path 3 12 8 3 5 1 0))
 	   do (glfw:poll-events)
-	   do (glfw:swap-buffers))))))
+	   do (glfw:swap-buffers)))))

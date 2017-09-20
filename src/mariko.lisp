@@ -186,7 +186,7 @@ from file must have an existing hash key. If not then there will be undesired be
 	  (setf yshift (+ yshift offset)))
 	(when (and (evenp count) (eq y-even-column-offset t))
 	  (setf yshift (+ yshift offset)))
-	(create-tile-object (+ xshift (car sprite-coord)) (+ yshift (cadr sprite-coord)) path sprite-coord texture char tile-vector xshift yshift))))
+	  (create-tile-object (+ xshift (car sprite-coord)) (+ yshift (cadr sprite-coord)) path sprite-coord texture char tile-vector xshift yshift))))
 
 (defun get-map-width (map-list)
   (loop for i in map-list
@@ -202,8 +202,6 @@ from file must have an existing hash key. If not then there will be undesired be
 ;;length and width may be used later for grid
 (defun read-tile-list (tile-vector map-list texture-table path-table tile-pixel-coord-table x-distance-apart y-distance-apart &key (y-odd-column-offset nil) (y-even-column-offset nil) (offset 0) (xshift 0) (yshift 0))
   "read map data file and draw tiles accordingly. if offset must have a value to to use and even or odd column offset"
-  (let* ((width (get-map-width map-list))
-	 (length (get-map-length (length map-list) width)))
     (loop for char in map-list
        with path 
        with sprite-coord
@@ -218,9 +216,10 @@ from file must have an existing hash key. If not then there will be undesired be
        and
        do (setf yshift (+ yshift y-distance-apart))
        and
-       do (setf xshift 0))))
+       do (setf xshift 0)))
 
 (defun draw-tiles (tile-vector)
+  "draw and sort by y values"
   (loop for tile across tile-vector
      do (setf tile-vector (sort tile-vector #'< :key #'(lambda (tile) (slot-value tile 'y)))))
   (loop for tile across tile-vector

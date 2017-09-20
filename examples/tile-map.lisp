@@ -1,3 +1,5 @@
+(in-package #:mariko-examples)
+
 (glfw:def-key-callback quit-on-escape (window key scancode action mod-keys)
   (declare (ignore window scancode mod-keys))
   (when (and (eq key :escape) (eq action :press))
@@ -11,16 +13,7 @@
   (setf (gethash #\0 path-table) (car path-list))
   (setf (gethash #\0 tile-pixel-coord-table) (car tile-pixel-coord-list))
   (setf (gethash #\0 texture-table) (mariko:load-texture (car path-list))))
-  ;;note use gamebox-grid::cell change to one colon when loading it again
-;;Note make a function that highlights the specific tile chosen by gamebox-grid
-;;note tile drawer and grid s can be two separate functions. 
-;;(defun highlight-hex-tile ()
- ;; ()
-;;(defun make-hex-grid (map-width map-length path)
- ;; (let ((grid (gamebox-grids:grid 'gamebox-grids:hex-rows :offset :odd :y-axis :down :size (gamebox-math:vec map-width map-length) :cell-size (gamebox-math:vec (mariko:get-image-width path) (mariko:get-image-height path)))))
-   ;; (princ (gamebox-grids:cell-to-point grid (gamebox-grids::cell 1 0)))
-    ;;(terpri)
-    ;;(princ (gamebox-grids:cell-member-p grid (gamebox-grids::cell 5 5)))))
+
     
 (defun map-tiles (data-file path-table tile-pixel-coord-table texture-table)
   (let* ((map-list (mariko:read-file-to-list data-file))
@@ -30,7 +23,7 @@
   (mariko:draw-tiles tile-vector)))
 
 			     
-(defun main ()
+(defun tile-map-test ()
   (sdl2-image:init '(:png))
   (glfw:with-init-window (:title "Test Window" :width 800 :height 400)
     (let* ((grass "Tile_Grass.png")
