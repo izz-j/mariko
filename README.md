@@ -15,7 +15,7 @@ My experimental sprite renderer.
 The characters on the "variouswalkcycle.png" are open and are from [opengameart](https://opengameart.org/)
 
 
-Instructions
+**Instructions**
 
 Clone or extract mariko to your local projects directory "~/quicklisp/local-projects/"
 
