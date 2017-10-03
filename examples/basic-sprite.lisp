@@ -1,3 +1,5 @@
+(in-package #:mariko-examples)
+
 (glfw:def-key-callback quit-on-escape (window key scancode action mod-keys)
   (declare (ignore window scancode mod-keys))
   (when (and (eq key :escape) (eq action :press))
