@@ -13,3 +13,24 @@ From "variouswalkcycle.png"
 
 My experimental sprite renderer.
 The characters on the "variouswalkcycle.png" are open and are from [opengameart](https://opengameart.org/)
+
+
+Instructions
+
+Clone or extract mariko to your local projects directory "~/quicklisp/local-projects/"
+
+then quickload mariko
+
+(ql:quickload 'mariko)
+
+To run mariko's examples, first load the system
+
+(asdf:load-system 'mariko/mariko-examples)
+
+then run an example
+
+(mariko-examples:basic-sprite-test)
+
+(mariko-examples:anim-test)
+
+(mariko-examples:tile-map-test)
